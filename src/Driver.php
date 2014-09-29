@@ -113,7 +113,7 @@ class Driver
      */
     private function buildConnection()
     {
-        $connection = stream_socket_client("tcp://{$host}:{$port}", $errno, $message);
+        $connection = stream_socket_client("tcp://{$this->host}:{$this->port}", $errno, $message);
         $success    = fread($connection, 26);
 
         if ($connection === false || !$success) {
