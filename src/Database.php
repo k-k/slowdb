@@ -63,7 +63,12 @@ class Database
      */
     public function all()
     {
-        return $this->collections->getKeys();
+        $results = [];
+        foreach ($this->collections as $collection) {
+            $result[] = array_merge(['name' => $collection->getName()], $collection->info());
+        }
+
+        return $result;
     }
 
     /**
