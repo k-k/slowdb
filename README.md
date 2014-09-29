@@ -3,7 +3,7 @@ SlowDB
 
 When you don't want Redis, Memcached, or any other Key/Value store.
 
-SlowDB is a Key/Value store written purely in PHP that'd you be upset to find your
+SlowDB is the Key/Value store written purely in PHP that'd you be upset to find your
 co-worker running in production.
 
 ### Features:
