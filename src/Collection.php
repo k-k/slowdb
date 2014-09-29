@@ -42,6 +42,11 @@ class Collection
         $this->rebuildIndex();
     }
 
+    public function info()
+    {
+        return ['count' => $this->count(), 'size' => $this->file->getSize()];
+    }
+
     /**
      * Returns all Key/Value pairs in the Colleciton
      *
@@ -80,14 +85,20 @@ class Collection
      *
      * Optionally you can pass a an Expression to filter the count by
      *
-     * @param  string $match An expression to filter on
+     * @param  string  $match An expression to filter on
+     * @param  boolean $exact Whether to do an exact match
      *
      * @return integer
      */
-    public function count($match = null)
+    public function count($match = null, $exact = false)
     {
         if (!is_null($match)) {
             $keys    = $this->index->getKeys();
+
+            if ($exact) {
+                $match = "^{$match}$";
+            }
+
             $matches = array_filter($keys, function($key) use ($match) {
                 return preg_match("/{$match}/i", $key);
             });
