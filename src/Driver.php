@@ -12,6 +12,20 @@ class Driver
     const CLIENT = 'php-library';
 
     /**
+     * Database server host
+     *
+     * @var string
+     */
+    private $host;
+
+    /**
+     * Database server port
+     *
+     * @var string
+     */
+    private $port;
+
+    /**
      * A socket connection to the Database
      *
      * @var resource
@@ -33,7 +47,8 @@ class Driver
      */
     public function __construct($host, $port)
     {
-        $this->connection = $this->buildConnection($host, $port);
+        $this->host = $host;
+        $this->port = $port;
     }
 
     /**
@@ -70,6 +85,8 @@ class Driver
      */
     public function __call($method, array $arguments = [])
     {
+        $connection = $this->buildConnection();
+
         $command = [
             'client'    => self::CLIENT,
             'method'    => $method,
@@ -81,8 +98,10 @@ class Driver
             $this->collection = null;
         }
 
-        fwrite($this->connection, json_encode($command));
-        $response = stream_get_contents($this->connection);
+        fwrite($connection, json_encode($command));
+        $response = stream_get_contents($connection);
+
+        fclose($connection);
 
         return json_decode($response, true);
     }
@@ -90,12 +109,9 @@ class Driver
     /**
      * Builds and tests the connection to the Database
      *
-     * @param  string   $host The database host
-     * @param  string   $port The database port
-     *
      * @return resource
      */
-    private function buildConnection($host, $port)
+    private function buildConnection()
     {
         $connection = stream_socket_client("tcp://{$host}:{$port}", $errno, $message);
         $success    = fread($connection, 26);
