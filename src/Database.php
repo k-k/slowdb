@@ -28,7 +28,9 @@ class Database
     public function __construct($filepath = '/tmp/slowdb')
     {
         if (!file_exists($filepath)) {
-            mkdir($filepath, 777);
+            $umask = umask(0);
+            mkdir($filepath, 0777);
+            umask($umask);
         }
 
         $this->filepath    = $filepath;

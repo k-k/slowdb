@@ -20,7 +20,8 @@ class File
      */
     public function __construct($path)
     {
-        $this->file = new \SplFileObject($path, 'rw+');
+        $mode = file_exists($path) ? 'rw+' : 'w+';
+        $this->file = new \SplFileObject($path, $mode);
     }
 
     /**
