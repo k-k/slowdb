@@ -1,0 +1,15 @@
+{
+    "name": "kmfk/slowdb",
+    "description": "A Key/Value Store written in PHP",
+    "autoload": {
+        "psr-4": {"SlowDB\\": "src/"}
+    },
+    "require": {
+        "doctrine/collections": "~1.2.0",
+        "react/socket":         "~0.4.0",
+        "symfony/finder":       "~2.5.0"
+    },
+    "require-dev": {
+        "raulfraile/ladybug-bundle": "~1.0"
+    }
+}

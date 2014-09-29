@@ -1,0 +1,61 @@
+#!/usr/bin/env php
+<?php
+
+require_once 'vendor/autoload.php';
+
+use React\EventLoop\Factory,
+    React\Socket\Server;
+
+use SlowDB\Database;
+
+$slowdb = new Database();
+$loop   = Factory::create();
+$socket = new Server($loop);
+
+
+/**
+ * Start the Event Loop for the Server - Listens for Connections
+ */
+$socket->on('connection', function ($conn) use ($slowdb) {
+
+    $conn->write("Welcome to SlowDB\n");
+    $conn->write("slowdb> ");
+
+    $conn->on('data', function ($request) use ($conn, $slowdb) {
+
+        if (in_array(trim($request), ['quit', 'exit'])) {
+            $conn->write("\nThanks. Goodbye!\n\n");
+            $conn->end();
+
+            return 0;
+        }
+
+        $request   = json_decode($request, true);
+        $instance  = !empty($request['collection']) ? $slowdb->{$request['collection']} : $slowdb;
+        $arguments = isset($request['arguments']) ? $request['arguments'] : [];
+
+        if (!method_exists($instance, $request['method'])) {
+            $conn->write(json_encode(['error' => 'Unsupported operation!']));
+            $conn->end();
+
+            return 0;
+        }
+
+        $result = call_user_func_array([$instance, $request['method']], $arguments);
+
+        if (empty($request['client'])) {
+            $conn->write(json_encode($result, JSON_PRETTY_PRINT));
+            $conn->write("\nslowdb> ");
+
+            return 0;
+        }
+
+        $conn->write(json_encode($result));
+        $conn->end();
+
+        return 0;
+    });
+});
+
+$socket->listen(1337);
+$loop->run();
