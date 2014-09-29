@@ -90,7 +90,7 @@ class Database
     public function dropAll()
     {
         foreach ($this->collections->getKeys() as $collection) {
-            $this->dropCollection($collection);
+            $this->drop($collection);
         }
     }
 
