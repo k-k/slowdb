@@ -34,7 +34,7 @@ indexes built on every request. On small datasets, this should be negligible -
 while large datasets, this can add unwanted latency to requests.
 
 The best way to use SlowDB is by using the included socket server
-(built on[ReactPHP](https://github.com/reactphp/socket)) and [driver](src/Driver.php).
+(built on [ReactPHP](https://github.com/reactphp/socket)) and the [driver](src/Driver.php).
 
 While only single threaded, this will keep the database indexes in memory and provide better
 performance.
@@ -45,6 +45,7 @@ performance.
 
 Once the server is running, you can use it like this:
 
+```php
     <?php
 
     require 'vendor/autoload.php';
@@ -58,3 +59,4 @@ Once the server is running, you can use it like this:
     $value = $driver->test->get('abc');
 
     print_r($value);
+```
