@@ -1,7 +1,7 @@
 SlowDB
 ======
 
-SlowDB: when you don't want Redis, Memcached, or any other Key/Value store.
+When you don't want Redis, Memcached, or any other Key/Value store.
 
 SlowDB is a Key/Value store written purely in PHP that'd you be upset to find your
 co-worker running in production.
@@ -21,9 +21,9 @@ for safe, consistent writes.
 
 Clone the repository locally and run [composer](https://getcomposer.org/download/) install:
 
-  $> git clone https://github.com/kmfk/slowdb
-  $> cd slowdb/
-  $> php composer.phar install
+    $> git clone https://github.com/kmfk/slowdb
+    $> cd slowdb/
+    $> php composer.phar install
 
 ### Usage
 
@@ -39,4 +39,4 @@ The best way to use SlowDB is by using the included socket server
 While only single threaded, this will keep the database indexes in memory and provide better
 performance.
 
-  $> ./slowdb &
+    $> ./slowdb &
