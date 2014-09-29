@@ -20,7 +20,7 @@ class File
      */
     public function __construct($path)
     {
-        $this->file = new \SplFileObject($path, 'w+');
+        $this->file = new \SplFileObject($path, 'rw+');
     }
 
     /**
@@ -52,7 +52,7 @@ class File
      */
     public function getFileSize()
     {
-        return $this->file->getSize();
+        return filesize($this->file->getPathname());
     }
 
     /**
