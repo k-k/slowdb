@@ -26,13 +26,6 @@ class Driver
     private $port;
 
     /**
-     * A socket connection to the Database
-     *
-     * @var resource
-     */
-    private $connection;
-
-    /**
      * The collection name
      *
      * @var string
@@ -49,16 +42,6 @@ class Driver
     {
         $this->host = $host;
         $this->port = $port;
-    }
-
-    /**
-     * Deconstructor
-     *
-     * Ensures that we close the connection to the Database
-     */
-    public function __destruct()
-    {
-        fclose($this->connection);
     }
 
     /**
