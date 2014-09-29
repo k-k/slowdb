@@ -1,6 +1,8 @@
 SlowDB
 ======
 
+![SlowDB](slowdb.jpg)
+
 When you don't want Redis, Memcached, or any other Key/Value store.
 
 SlowDB is the Key/Value store written purely in PHP that'd you be upset to find your
