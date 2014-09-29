@@ -20,7 +20,7 @@ class File
      */
     public function __construct($path)
     {
-        $this->file = new \SplFileObject($path, 'r+w+b');
+        $this->file = new \SplFileObject($path, 'w+');
     }
 
     /**
