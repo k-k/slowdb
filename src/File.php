@@ -46,6 +46,16 @@ class File
     }
 
     /**
+     * Returns the current size of the database file
+     *
+     * @return integer
+     */
+    public function getFileSize()
+    {
+        return $this->file->getSize();
+    }
+
+    /**
      * Write the new record to the database file
      *
      * We store metadata (lengths) in the first 8 bytes of each row

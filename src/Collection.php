@@ -44,7 +44,7 @@ class Collection
 
     public function info()
     {
-        return ['count' => $this->count(), 'size' => $this->file->getSize()];
+        return ['count' => $this->count(), 'size' => $this->file->getFileSize()];
     }
 
     /**
