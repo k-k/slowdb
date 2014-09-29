@@ -11,7 +11,7 @@ co-worker running in production.
   - Multiple named Collections
   - In-memory indexes
   - Safe persistence to disk
-  
+
 SlowDB allows for storing Key/Value pairs in multiple collections. Indexes are
 built/rebuilt on startup to map Keys to file locations on disk. This allows
 performant binary searches across database files and writing directly to disk
@@ -34,9 +34,27 @@ indexes built on every request. On small datasets, this should be negligible -
 while large datasets, this can add unwanted latency to requests.
 
 The best way to use SlowDB is by using the included socket server
-(built on[ReactPHP](https://github.com/reactphp/socket)) and [driver](src/Driver.php). 
+(built on[ReactPHP](https://github.com/reactphp/socket)) and [driver](src/Driver.php).
 
 While only single threaded, this will keep the database indexes in memory and provide better
 performance.
 
     $> ./slowdb &
+
+### Basic Example
+
+Once the server is running, you can use it like this:
+
+    <?php
+
+    require 'vendor/autoload.php';
+
+    use SlowDB\Driver;
+
+    $driver = new Driver('localhost', 1337);
+
+    $driver->test->set('abc', ['foo' => 'bar']);
+
+    $value = $driver->test->get('abc');
+
+    print_r($value);
