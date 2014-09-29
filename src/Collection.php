@@ -57,7 +57,7 @@ class Collection
         $results = [];
         foreach ($this->index->getKeys() as $key) {
             $result = $this->get($key);
-            $results[key($result)] = current($result);
+            $results[] = [key($result) => current($result)];
         }
 
         return $results;
@@ -126,7 +126,7 @@ class Collection
         $results = [];
         foreach ($matches as $match) {
             $result = $this->get($match);
-            $results[key($result)] = current($result);
+            $results[] = [key($result) => current($result)];
         }
 
         return $results;
