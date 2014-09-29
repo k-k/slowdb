@@ -65,7 +65,7 @@ class Database
     {
         $results = [];
         foreach ($this->collections as $collection) {
-            $result[] = array_merge(['name' => $collection->getName()], $collection->info());
+            $result[] = array_merge(['name' => $collection->name], $collection->info());
         }
 
         return $result;

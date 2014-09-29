@@ -12,7 +12,7 @@ class Collection
      *
      * @var string
      */
-    protected $name;
+    public $name;
 
     /**
      * The Database File
