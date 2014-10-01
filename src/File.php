@@ -28,11 +28,13 @@ class File
      * Decontructor
      *
      * A 'Just In Case' to clear our resource handler on our file
+     * and remove any locks
      *
      * @return type
      */
     public function __destruct()
     {
+        $this->file->flock(LOCK_UN);
         unset($this->file);
     }
 
