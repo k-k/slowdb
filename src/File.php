@@ -20,7 +20,7 @@ class File
      */
     public function __construct($path)
     {
-        $mode = file_exists($path) ? 'rw+' : 'w+';
+        $mode = file_exists($path) ? 'rb+' : 'wb+';
         $this->file = new \SplFileObject($path, $mode);
     }
 
@@ -69,18 +69,21 @@ class File
      */
     public function insert($key, $value)
     {
+        $this->file->flock(LOCK_SH);
         $this->file->fseek(0, SEEK_END);
 
         $position = $this->file->ftell();
 
         $value = json_encode($value);
 
+        $this->file->flock(LOCK_EX);
         $this->file->fwrite(
             pack('N*', strlen($key)) .
             pack('N*', strlen($value)) .
             $key .
             $value
         );
+        $this->file->flock(LOCK_UN);
 
         return $position;
     }
@@ -94,10 +97,12 @@ class File
      */
     public function read($position)
     {
+        $this->file->flock(LOCK_SH);
         $metadata = $this->getMetadata($position);
 
-        $this->file->fseek($metadata['klen'], SEEK_CUR);
-        $value = $this->file->fread($metadata['vlen']);
+        $this->file->fseek($metadata->klen, SEEK_CUR);
+        $value = $this->file->fread($metadata->vlen);
+        $this->file->flock(LOCK_UN);
 
         return json_decode($value, true);
     }
@@ -125,23 +130,28 @@ class File
      */
     public function remove($position)
     {
-        $file = fopen($this->file->getPathname(), 'w+');
+        $temp = new \SplTempFileObject(-1);
 
-        // Find the current record and advance the pointer beyond it
+        $this->file->flock(LOCK_EX);
+
+        $filesize = $this->file->getSize();
         $metadata = $this->getMetadata($position);
-        fseek($file, $metadata['len'], SEEK_CUR);
 
-        // Push the end of the file into temp
-        $temp = fopen('php://memory', 'w+');
-        stream_copy_to_stream($file, $temp);
+        // Seek past the document we want to remove
+        $this->file->fseek($metadata->length, SEEK_CUR);
 
-        // Reset back to original position and overwrite it
-        fseek($file, $position);
+        // Write everything after the target document to memory
+        $temp->fwrite($this->file->fread($filesize));
 
-        rewind($temp);
-        stream_copy_to_stream($temp, $file);
+        // Clear the file up to the target document
+        $this->file->ftruncate($position);
 
-        unset($temp, $file);
+        // Write Temp back to the end of the file
+        $temp->fseek(0);
+        $this->file->fseek(0, SEEK_END);
+        $this->file->fwrite($temp->fread($filesize));
+
+        $this->file->flock(LOCK_UN);
     }
 
     /**
@@ -151,7 +161,11 @@ class File
      */
     public function truncate()
     {
-        return $this->file->ftruncate(0);
+        $this->file->flock(LOCK_EX);
+        $result = $this->file->ftruncate(0);
+        $this->file->flock(LOCK_UN);
+
+        return $result;
     }
 
 
@@ -162,6 +176,7 @@ class File
      */
     public function buildIndex()
     {
+        $this->file->flock(LOCK_SH);
         $this->file->fseek(0);
 
         $indexes = [];
@@ -174,11 +189,11 @@ class File
             }
 
             // Gets the key and adds the key and position to the array
-            $indexes[$this->file->fread($metadata['klen'])] = $position;
-
+            $indexes[$this->file->fread($metadata->klen)] = $position;
             //Skip over the value, to the next key/value pair
-            $this->file->fseek($metadata['vlen'], SEEK_CUR);
+            $this->file->fseek($metadata->vlen, SEEK_CUR);
         }
+        $this->file->flock(LOCK_UN);
 
         return $indexes;
     }
@@ -202,7 +217,7 @@ class File
         if ($metadata) {
             list(, $klen, $vlen) = unpack('N*', $metadata);
 
-            return ['klen' => $klen, 'vlen' => $vlen, 'len' => $klen + $vlen];
+            return (object) ['klen' => $klen, 'vlen' => $vlen, 'length' => $klen + $vlen];
         }
 
         return false;
