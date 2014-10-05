@@ -5,6 +5,11 @@ namespace SlowDB;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Finder\Finder;
 
+/**
+ * Database Class
+ *
+ * @author Keith Kirk <keith@kmfk.io>
+ */
 class Database
 {
     /**
@@ -39,13 +44,27 @@ class Database
 
     /**
      * Magic getter - retrieves a collection by name
-     * Collections are idempotent, we create a collection if it does not exist
      *
      * @param  string $name The name of the Collection
      *
      * @return Collection
      */
     public function __get($name)
+    {
+       return $this->getCollection($name);
+    }
+
+    /**
+     * Gets a Collection by name
+     *
+     * Collections are idempotent, we create a collection if it does not exist
+     * or return existing collections
+     *
+     * @param  string $name The name of the Collection
+     *
+     * @return Collection
+     */
+    public function getCollection($name)
     {
         $name = strtolower($name);
 

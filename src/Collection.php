@@ -5,6 +5,11 @@ namespace SlowDB;
 use Doctrine\Common\Collections\ArrayCollection;
 use SlowDB\File;
 
+/**
+ * Collection Class
+ *
+ * @author Keith Kirk <keith@kmfk.io>
+ */
 class Collection
 {
     /**
@@ -42,6 +47,11 @@ class Collection
         $this->rebuildIndex();
     }
 
+    /**
+     * Returns basic information about the collection
+     *
+     * @return array
+     */
     public function info()
     {
         return ['count' => $this->count(), 'size' => $this->file->getFileSize()];
@@ -83,7 +93,8 @@ class Collection
     /**
      * Returns a count of Key/Value pairs in the Collection
      *
-     * Optionally you can pass a an Expression to filter the count by
+     * Optionally you can pass a an case-insensitive Expression to filter the
+     * count by
      *
      * @param  string  $match An expression to filter on
      * @param  boolean $exact Whether to do an exact match
@@ -93,7 +104,7 @@ class Collection
     public function count($match = null, $exact = false)
     {
         if (!is_null($match)) {
-            $keys    = $this->index->getKeys();
+            $keys = $this->index->getKeys();
 
             if ($exact) {
                 $match = "^{$match}$";
@@ -110,7 +121,7 @@ class Collection
     }
 
     /**
-     * Queries for Keys matching an expression
+     * Queries for Keys matching a case insensitive expression
      *
      * @param  string $match The expression to match against
      *

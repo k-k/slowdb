@@ -2,6 +2,11 @@
 
 namespace SlowDB;
 
+/**
+ * Driver Class
+ *
+ * @author Keith Kirk <keith@kmfk.io>
+ */
 class Driver
 {
     /**

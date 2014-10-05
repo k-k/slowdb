@@ -2,8 +2,11 @@
 
 namespace SlowDB;
 
-use Symfony\Component\Filesystem\Filesystem;
-
+/**
+ * File Class
+ *
+ * @author Keith Kirk <keith@kmfk.io>
+ */
 class File
 {
     /**
@@ -190,8 +193,9 @@ class File
                 break;
             }
 
-            // Gets the key and adds the key and position to the array
+            // Gets the key and adds the key and position to the index
             $indexes[$this->file->fread($metadata->klen)] = $position;
+
             //Skip over the value, to the next key/value pair
             $this->file->fseek($metadata->vlen, SEEK_CUR);
         }
@@ -204,6 +208,10 @@ class File
      * Retrieves the Metadata for a Key/Value pair
      *
      * Optionally allows a specific position offset in the file
+     * Return Array
+     *     - klen: The length of the Key
+     *     - vlen: The length of the Value
+     *     - length: The total combined length of the Key and the Value
      *
      * @param  integer $position  An offset to seek to in a file
      *
