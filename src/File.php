@@ -79,7 +79,9 @@ class File
 
         $position = $this->file->ftell();
 
-        $value = json_encode($value);
+        if (is_array($value) || is_object($value)) {
+            $value = json_encode($value);
+        }
 
         $this->file->flock(LOCK_EX);
         $this->file->fwrite(
@@ -109,7 +111,12 @@ class File
         $value = $this->file->fread($metadata->vlen);
         $this->file->flock(LOCK_UN);
 
-        return json_decode($value, true);
+        $mixed = json_decode($value, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return $value;
+        }
+
+        return $mixed;
     }
 
     /**
