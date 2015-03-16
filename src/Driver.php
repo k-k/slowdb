@@ -104,7 +104,7 @@ class Driver
         $connection = stream_socket_client("tcp://{$this->host}:{$this->port}", $errno, $message);
         $success    = fread($connection, 26);
 
-        if ($connection === false || !$success) {
+        if (false === $connection || false === $success) {
             throw new \UnexpectedValueException("Failed to connect: $message");
         }
 

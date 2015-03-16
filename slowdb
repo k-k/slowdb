@@ -8,7 +8,13 @@ use React\EventLoop\Factory,
 
 use SlowDB\Database;
 
+$shortoptions = "a::p::d::h";
+$longoptions  = ['bind-address::', 'port::', 'directory::', 'help'];
+
+$options = getopt($shortoptions, $longoptions);
+
 $slowdb = new Database();
+
 $loop   = Factory::create();
 $socket = new Server($loop);
 
@@ -31,12 +37,20 @@ $socket->on('connection', function ($conn) use ($slowdb) {
         }
 
         $request   = json_decode($request, true);
-        $instance  = !empty($request['collection']) ? $slowdb->{$request['collection']} : $slowdb;
+        $instance  = !empty($request['collection']) ? $slowdb->getCollection($request['collection']) : $slowdb;
         $arguments = isset($request['arguments']) ? $request['arguments'] : [];
 
         if (!method_exists($instance, $request['method'])) {
-            $conn->write(json_encode(['error' => 'Unsupported operation!']));
-            $conn->end();
+            $error = ['error' => 'Unsupported operation!'];
+
+            if (empty($request['client'])) {
+                $conn->write(json_encode($error, JSON_PRETTY_PRINT));
+                $conn->write("\nslowdb> ");
+
+                return 0;
+            }
+
+            $conn->write(json_encode($error));
 
             return 0;
         }

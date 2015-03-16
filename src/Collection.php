@@ -199,16 +199,19 @@ class Collection
     }
 
     /**
-     * Drops the Collection
+     * Removes the Collection database file
      *
      * @return bool
      */
     public function drop()
     {
         $filepath = $this->file->getFilePath();
+
         unset($this->file);
 
-        unlink($filepath);
+        if (!file_exists($filepath)) {
+            unlink($filepath);
+        }
 
         return true;
     }

@@ -99,6 +99,10 @@ class Database
      */
     public function drop($collection)
     {
+        if (!$this->collections->containsKey($collection)) {
+            return false;
+        }
+
         $this->collections->get($collection)->drop();
         $this->collections->remove($collection);
 
@@ -148,7 +152,7 @@ class Database
     }
 
     /**
-     * Generates a new database file for a collection based on the
+     * Generates a new database file path for a collection based on the
      * default database location
      *
      * @param  string $collection The name of the Collection
